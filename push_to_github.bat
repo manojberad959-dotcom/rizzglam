@@ -1,27 +1,30 @@
 @echo off
-echo Checking for Git...
-where git >nul 2>nul
-if %errorlevel% neq 0 (
-    echo [ERROR] Git is not installed or not in your PATH.
-    echo Please install Git from: https://git-scm.com/download/win
-    echo After installing, restart your terminal and run this script again.
-    pause
-    exit /b
-)
-echo Initializing Git Repository for Rizzglam...
+cd /d "%~dp0"
+echo ==============================================
+echo  Rizzglam Auto-Deploy Script
+echo  Working Directory: %CD%
+echo ==============================================
+echo [1/5] Initializing Git...
 git init
+echo [2/5] Staging files...
 git add .
-git commit -m "Initial commit"
+echo [3/5] Committing files...
+git commit -m "Initial commit for Rizzglam"
+echo [4/5] Setting up Remote (https://github.com/manojberad959-dotcom/rizzglam.git)...
+:: Remove origin if it exists to avoid errors on retry
+git remote remove origin 2>nul
+git remote add origin https://github.com/manojberad959-dotcom/rizzglam.git
 git branch -M main
-echo.
-echo ------------------------------------------------------------------
-echo Please create a new Empty Repository on GitHub (without README/gitignore).
-echo Paste the URL below (e.g., https://github.com/YourUser/rizzglam.git)
-echo ------------------------------------------------------------------
-set /p repo_url="https://github.com/manojberad959-dotcom/rizzglam.git"
-git remote add origin %repo_url%
-echo Pushing code to GitHub...
+echo [5/5] Pushing to GitHub...
 git push -u origin main
 echo.
-echo Done! You can now open GitHub Codespaces for this repo.
+echo ==============================================
+if %errorlevel% equ 0 (
+    echo  SUCCESS! Your code is live.
+    echo  Go to: https://github.com/manojberad959-dotcom/rizzglam
+) else (
+    echo  PUSH FAILED. 
+    echo  Please check if the repository exists and is empty.
+)
+echo ==============================================
 pause
